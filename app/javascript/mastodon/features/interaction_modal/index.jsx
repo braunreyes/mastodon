@@ -122,12 +122,14 @@ class InteractionModal extends React.PureComponent {
 
     if (registrationsOpen) {
       signupButton = (
-        <a href='/auth/sign_up' className='button button--block button-tertiary'>
-          <FormattedMessage id='sign_in_banner.create_account' defaultMessage='Create account' />
-        </a>
+        <form action='/auth/auth/openid_connect' method='post'>
+          <input type='hidden' name='intent' value='signup' />
+          <button className='button button--block button-tertiary'>
+            <FormattedMessage id='sign_in_banner.create_account' defaultMessage='Create account' />
+          </button>
+        </form>
       );
     } else {
-      // eslint-disable-next-line no-unused-vars
       signupButton = (
         <button className='button button--block button-tertiary' onClick={this.handleSignupClick}>
           <FormattedMessage id='sign_in_banner.create_account' defaultMessage='Create account' />
@@ -146,7 +148,7 @@ class InteractionModal extends React.PureComponent {
           <div className='interaction-modal__choices__choice'>
             <h3><FormattedMessage id='interaction_modal.on_this_server' defaultMessage='On this server' /></h3>
             <a className='button button--block' href='/auth/auth/openid_connect' rel='nofollow' data-method='post'><FormattedMessage id='sign_in_banner.sign_in' defaultMessage='Sign in' /></a>
-            {/* {signupButton} */}
+            {signupButton}
           </div>
 
           <div className='interaction-modal__choices__choice'>
