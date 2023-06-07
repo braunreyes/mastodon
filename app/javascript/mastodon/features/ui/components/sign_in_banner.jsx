@@ -17,8 +17,8 @@ const SignInBanner = () => {
   if (registrationsOpen) {
     signupButton = (
       <form action='/auth/auth/openid_connect' method='post'>
-        <input type='hidden' name='signup' value='true' />
-        <button className='button button--block button-tertiary' type='submit'>
+        <input type='hidden' name='intent' value='signup' />
+        <button className='button button--block button-tertiary'>
           <FormattedMessage id='sign_in_banner.create_account' defaultMessage='Create account' />
         </button>
       </form>
