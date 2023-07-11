@@ -1,5 +1,13 @@
 Rails.application.config.middleware.use OmniAuth::Builder do
   # Vanilla omniauth strategies
+  before_request_phase do |env|
+    request = Rack::Request.new(env)
+    env['omniauth.strategy'].options.merge!(
+      {
+        extra_authorize_params: request.params,
+      }
+    )
+  end
 end
 
 Devise.setup do |config|
@@ -73,7 +81,7 @@ Devise.setup do |config|
     oidc_options[:display_name] = ENV['OIDC_DISPLAY_NAME'] #OPTIONAL
     oidc_options[:issuer] = ENV['OIDC_ISSUER'] if ENV['OIDC_ISSUER'] #NEED
     oidc_options[:discovery] = ENV['OIDC_DISCOVERY'] == 'true' if ENV['OIDC_DISCOVERY'] #OPTIONAL (default: false)
-    oidc_options[:client_auth_method] =  ENV['OIDC_CLIENT_AUTH_METHOD'] if ENV['OIDC_CLIENT_AUTH_METHOD'] #OPTIONAL (default: basic)
+    oidc_options[:client_auth_method] = ENV['OIDC_CLIENT_AUTH_METHOD'] if ENV['OIDC_CLIENT_AUTH_METHOD'] #OPTIONAL (default: basic)
     scope_string = ENV['OIDC_SCOPE'] if ENV['OIDC_SCOPE'] #NEED
     scopes = scope_string.split(',')
     oidc_options[:scope] = scopes.map { |x| x.to_sym }
