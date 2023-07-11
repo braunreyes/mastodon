@@ -77,9 +77,13 @@ class Header extends PureComponent {
 
       if (registrationsOpen) {
         signupButton = (
-          <a href={signupUrl} className='button' data-method='post' rel='nofollow'>
-            <FormattedMessage id='sign_in_banner.create_account' defaultMessage='Create account' />
-          </a>
+          <form action={signupUrl} method='post'>
+            <input type='hidden' name='intent' value='signup' />
+            <button className='button'>
+              <FormattedMessage id='sign_in_banner.create_account' defaultMessage='Create account' />
+            </button>
+          </form>
+
         );
       } else {
         signupButton = (
@@ -92,7 +96,7 @@ class Header extends PureComponent {
       content = (
         <>
           {signupButton}
-          <a href='/auth/auth/openid_connect' className='button button-tertiary' data-method='post' rel='nofollow'><FormattedMessage id='sign_in_banner.sign_in' defaultMessage='Login' /></a>
+          <a href='/auth/auth/openid_connect' className='button button-tertiary' data-method='post' rel='nofollow'><FormattedMessage id='sign_in_banner.sign_in' defaultMessage='Sign in' /></a>
         </>
       );
     }

@@ -130,9 +130,12 @@ class InteractionModal extends PureComponent {
 
     if (registrationsOpen) {
       signupButton = (
-        <a href={signupUrl} className='button button--block button-tertiary' data-method='post' rel='nofollow'>
-          <FormattedMessage id='sign_in_banner.create_account' defaultMessage='Create account' />
-        </a>
+        <form action={signupUrl} method='post'>
+          <input type='hidden' name='intent' value='signup' />
+          <button className='button button--block button-tertiary'>
+            <FormattedMessage id='sign_in_banner.create_account' defaultMessage='Create account' />
+          </button>
+        </form>
       );
     } else {
       signupButton = (
