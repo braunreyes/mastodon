@@ -9,8 +9,7 @@ import { Helmet } from 'react-helmet';
 
 import Column from 'mastodon/components/column';
 
-export default @injectIntl
-class PrivacyPolicy extends React.PureComponent {
+class TermsOfService extends React.PureComponent {
 
   static propTypes = {
     intl: PropTypes.object,
@@ -239,3 +238,5 @@ class PrivacyPolicy extends React.PureComponent {
   }
 
 }
+
+export default injectIntl(TermsOfService);
