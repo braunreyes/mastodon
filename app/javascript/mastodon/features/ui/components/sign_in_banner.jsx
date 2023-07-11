@@ -17,11 +17,11 @@ const SignInBanner = () => {
 
   let signupButton;
 
-  const signupUrl = useAppSelector((state) => state.getIn(['server', 'server', 'registrations', 'url'], null) || '/auth/sign_up');
+  const signupUrl = useAppSelector((state) => state.getIn(['server', 'server', 'registrations', 'url'], null) || '/auth/auth/openid_connect');
 
   if (registrationsOpen) {
     signupButton = (
-      <a href={signupUrl} className='button button--block'>
+      <a href={signupUrl} className='button button--block' data-method='post' rel='nofollow'>
         <FormattedMessage id='sign_in_banner.create_account' defaultMessage='Create account' />
       </a>
     );
@@ -37,7 +37,7 @@ const SignInBanner = () => {
     <div className='sign-in-banner'>
       <p><FormattedMessage id='sign_in_banner.text' defaultMessage='Login to follow profiles or hashtags, favourite, share and reply to posts. You can also interact from your account on a different server.' /></p>
       {signupButton}
-      <a href='/auth/sign_in' className='button button--block button-tertiary'><FormattedMessage id='sign_in_banner.sign_in' defaultMessage='Login' /></a>
+      <a href='/auth/auth/openid_connect' rel='nofollow' className='button button--block button-tertiary' data-method='post'><FormattedMessage id='sign_in_banner.sign_in' defaultMessage='Login' /></a>
     </div>
   );
 };

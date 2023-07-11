@@ -27,7 +27,7 @@ const messages = defineMessages({
 });
 
 const mapStateToProps = (state) => ({
-  signupUrl: state.getIn(['server', 'server', 'registrations', 'url'], null) || '/auth/sign_up',
+  signupUrl: state.getIn(['server', 'server', 'registrations', 'url'], null) || '/auth/auth/openid_connect',
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -77,7 +77,7 @@ class Header extends PureComponent {
 
       if (registrationsOpen) {
         signupButton = (
-          <a href={signupUrl} className='button'>
+          <a href={signupUrl} className='button' data-method='post' rel='nofollow'>
             <FormattedMessage id='sign_in_banner.create_account' defaultMessage='Create account' />
           </a>
         );
@@ -92,7 +92,7 @@ class Header extends PureComponent {
       content = (
         <>
           {signupButton}
-          <a href='/auth/sign_in' className='button button-tertiary'><FormattedMessage id='sign_in_banner.sign_in' defaultMessage='Login' /></a>
+          <a href='/auth/auth/openid_connect' className='button button-tertiary' data-method='post' rel='nofollow'><FormattedMessage id='sign_in_banner.sign_in' defaultMessage='Login' /></a>
         </>
       );
     }

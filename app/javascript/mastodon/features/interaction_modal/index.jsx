@@ -13,7 +13,7 @@ import { registrationsOpen } from 'mastodon/initial_state';
 
 const mapStateToProps = (state, { accountId }) => ({
   displayNameHtml: state.getIn(['accounts', accountId, 'display_name_html']),
-  signupUrl: state.getIn(['server', 'server', 'registrations', 'url'], null) || '/auth/sign_up',
+  signupUrl: state.getIn(['server', 'server', 'registrations', 'url'], null) || '/auth/auth/openid_connect',
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -130,7 +130,7 @@ class InteractionModal extends PureComponent {
 
     if (registrationsOpen) {
       signupButton = (
-        <a href={signupUrl} className='button button--block button-tertiary'>
+        <a href={signupUrl} className='button button--block button-tertiary' data-method='post' rel='nofollow'>
           <FormattedMessage id='sign_in_banner.create_account' defaultMessage='Create account' />
         </a>
       );
