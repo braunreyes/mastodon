@@ -1,13 +1,18 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+
 import { injectIntl, defineMessages } from 'react-intl';
-import TextIconButton from './text_icon_button';
-import Overlay from 'react-overlays/Overlay';
-import { supportsPassiveEvents } from 'detect-passive-events';
+
 import classNames from 'classnames';
+
+import { supportsPassiveEvents } from 'detect-passive-events';
+import fuzzysort from 'fuzzysort';
+import Overlay from 'react-overlays/Overlay';
+
 import { languages as preloadedLanguages } from 'mastodon/initial_state';
 import { loupeIcon, deleteIcon } from 'mastodon/utils/icons';
-import fuzzysort from 'fuzzysort';
+
+import TextIconButton from './text_icon_button';
 
 const messages = defineMessages({
   changeLanguage: { id: 'compose.language.change', defaultMessage: 'Change language' },
@@ -15,9 +20,9 @@ const messages = defineMessages({
   clear: { id: 'emoji_button.clear', defaultMessage: 'Clear' },
 });
 
-const listenerOptions = supportsPassiveEvents ? { passive: true } : false;
+const listenerOptions = supportsPassiveEvents ? { passive: true, capture: true } : true;
 
-class LanguageDropdownMenu extends React.PureComponent {
+class LanguageDropdownMenu extends PureComponent {
 
   static propTypes = {
     value: PropTypes.string.isRequired,
@@ -39,11 +44,12 @@ class LanguageDropdownMenu extends React.PureComponent {
   handleDocumentClick = e => {
     if (this.node && !this.node.contains(e.target)) {
       this.props.onClose();
+      e.stopPropagation();
     }
   };
 
-  componentDidMount () {
-    document.addEventListener('click', this.handleDocumentClick, false);
+  componentDidMount() {
+    document.addEventListener('click', this.handleDocumentClick, { capture: true });
     document.addEventListener('touchend', this.handleDocumentClick, listenerOptions);
 
     // Because of https://github.com/react-bootstrap/react-bootstrap/issues/2614 we need
@@ -56,8 +62,8 @@ class LanguageDropdownMenu extends React.PureComponent {
     });
   }
 
-  componentWillUnmount () {
-    document.removeEventListener('click', this.handleDocumentClick, false);
+  componentWillUnmount() {
+    document.removeEventListener('click', this.handleDocumentClick, { capture: true });
     document.removeEventListener('touchend', this.handleDocumentClick, listenerOptions);
   }
 
@@ -73,7 +79,7 @@ class LanguageDropdownMenu extends React.PureComponent {
     this.setState({ searchValue: target.value });
   };
 
-  search () {
+  search() {
     const { languages, value, frequentlyUsedLanguages } = this.props;
     const { searchValue } = this.state;
 
@@ -103,7 +109,7 @@ class LanguageDropdownMenu extends React.PureComponent {
     }).map(result => result.obj);
   }
 
-  frequentlyUsed () {
+  frequentlyUsed() {
     const { languages, value } = this.props;
     const current = languages.find(lang => lang[0] === value);
     const results = [];
@@ -130,32 +136,32 @@ class LanguageDropdownMenu extends React.PureComponent {
 
     let element = null;
 
-    switch(e.key) {
-    case 'Escape':
-      onClose();
-      break;
-    case 'Enter':
-      this.handleClick(e);
-      break;
-    case 'ArrowDown':
-      element = this.listNode.childNodes[index + 1] || this.listNode.firstChild;
-      break;
-    case 'ArrowUp':
-      element = this.listNode.childNodes[index - 1] || this.listNode.lastChild;
-      break;
-    case 'Tab':
-      if (e.shiftKey) {
-        element = this.listNode.childNodes[index - 1] || this.listNode.lastChild;
-      } else {
+    switch (e.key) {
+      case 'Escape':
+        onClose();
+        break;
+      case 'Enter':
+        this.handleClick(e);
+        break;
+      case 'ArrowDown':
         element = this.listNode.childNodes[index + 1] || this.listNode.firstChild;
-      }
-      break;
-    case 'Home':
-      element = this.listNode.firstChild;
-      break;
-    case 'End':
-      element = this.listNode.lastChild;
-      break;
+        break;
+      case 'ArrowUp':
+        element = this.listNode.childNodes[index - 1] || this.listNode.lastChild;
+        break;
+      case 'Tab':
+        if (e.shiftKey) {
+          element = this.listNode.childNodes[index - 1] || this.listNode.lastChild;
+        } else {
+          element = this.listNode.childNodes[index + 1] || this.listNode.firstChild;
+        }
+        break;
+      case 'Home':
+        element = this.listNode.firstChild;
+        break;
+      case 'End':
+        element = this.listNode.lastChild;
+        break;
     }
 
     if (element) {
@@ -171,33 +177,33 @@ class LanguageDropdownMenu extends React.PureComponent {
 
     let element = null;
 
-    switch(e.key) {
-    case 'Tab':
-    case 'ArrowDown':
-      element = this.listNode.firstChild;
+    switch (e.key) {
+      case 'Tab':
+      case 'ArrowDown':
+        element = this.listNode.firstChild;
 
-      if (element) {
-        element.focus();
-        e.preventDefault();
-        e.stopPropagation();
-      }
+        if (element) {
+          element.focus();
+          e.preventDefault();
+          e.stopPropagation();
+        }
 
-      break;
-    case 'Enter':
-      element = this.listNode.firstChild;
+        break;
+      case 'Enter':
+        element = this.listNode.firstChild;
 
-      if (element) {
-        onChange(element.getAttribute('data-index'));
-        onClose();
-      }
-      break;
-    case 'Escape':
-      if (searchValue !== '') {
-        e.preventDefault();
-        this.handleClear();
-      }
+        if (element) {
+          onChange(element.getAttribute('data-index'));
+          onClose();
+        }
+        break;
+      case 'Escape':
+        if (searchValue !== '') {
+          e.preventDefault();
+          this.handleClear();
+        }
 
-      break;
+        break;
     }
   };
 
@@ -209,13 +215,13 @@ class LanguageDropdownMenu extends React.PureComponent {
     const { value } = this.props;
 
     return (
-      <div key={lang[0]} role='option' tabIndex='0' data-index={lang[0]} className={classNames('language-dropdown__dropdown__results__item', { active: lang[0] === value })} aria-selected={lang[0] === value} onClick={this.handleClick} onKeyDown={this.handleKeyDown}>
+      <div key={lang[0]} role='option' tabIndex={0} data-index={lang[0]} className={classNames('language-dropdown__dropdown__results__item', { active: lang[0] === value })} aria-selected={lang[0] === value} onClick={this.handleClick} onKeyDown={this.handleKeyDown}>
         <span className='language-dropdown__dropdown__results__item__native-name' lang={lang[0]}>{lang[2]}</span> <span className='language-dropdown__dropdown__results__item__common-name'>({lang[1]})</span>
       </div>
     );
   };
 
-  render () {
+  render() {
     const { intl } = this.props;
     const { searchValue } = this.state;
     const isSearching = searchValue !== '';
@@ -237,8 +243,7 @@ class LanguageDropdownMenu extends React.PureComponent {
 
 }
 
-export default @injectIntl
-class LanguageDropdown extends React.PureComponent {
+class LanguageDropdown extends PureComponent {
 
   static propTypes = {
     value: PropTypes.string,
@@ -289,7 +294,7 @@ class LanguageDropdown extends React.PureComponent {
     this.setState({ placement: state.placement });
   };
 
-  render () {
+  render() {
     const { value, intl, frequentlyUsedLanguages } = this.props;
     const { open, placement } = this.state;
 
@@ -325,3 +330,5 @@ class LanguageDropdown extends React.PureComponent {
   }
 
 }
+
+export default injectIntl(LanguageDropdown);

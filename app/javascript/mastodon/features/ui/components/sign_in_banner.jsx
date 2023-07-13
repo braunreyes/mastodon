@@ -1,31 +1,36 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
+
 import { FormattedMessage } from 'react-intl';
-import { useDispatch } from 'react-redux';
-import { registrationsOpen } from 'mastodon/initial_state';
+
+
 import { openModal } from 'mastodon/actions/modal';
+import { registrationsOpen } from 'mastodon/initial_state';
+import { useAppDispatch, useAppSelector } from 'mastodon/store';
 
 const SignInBanner = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const openClosedRegistrationsModal = useCallback(
-    () => dispatch(openModal('CLOSED_REGISTRATIONS')),
+    () => dispatch(openModal({ modalType: 'CLOSED_REGISTRATIONS' })),
     [dispatch],
   );
 
   let signupButton;
 
+  const signupUrl = useAppSelector((state) => state.getIn(['server', 'server', 'registrations', 'url'], null) || '/auth/auth/openid_connect');
+
   if (registrationsOpen) {
     signupButton = (
-      <form action='/auth/auth/openid_connect' method='post'>
+      <form action={signupUrl} method='post'>
         <input type='hidden' name='intent' value='signup' />
-        <button className='button button--block button-tertiary'>
+        <button className='button button--block'>
           <FormattedMessage id='sign_in_banner.create_account' defaultMessage='Create account' />
         </button>
       </form>
     );
   } else {
     signupButton = (
-      <button className='button button--block button-tertiary' onClick={openClosedRegistrationsModal}>
+      <button className='button button--block' onClick={openClosedRegistrationsModal}>
         <FormattedMessage id='sign_in_banner.create_account' defaultMessage='Create account' />
       </button>
     );
@@ -34,8 +39,8 @@ const SignInBanner = () => {
   return (
     <div className='sign-in-banner'>
       <p><FormattedMessage id='sign_in_banner.text' defaultMessage='Sign in to follow profiles or hashtags, favourite, share and reply to posts. You can also interact from your account on a different server.' /></p>
-      <a className='button button--block' href='/auth/auth/openid_connect' rel='nofollow' data-method='post'><FormattedMessage id='sign_in_banner.sign_in' defaultMessage='Sign in' /></a>
       {signupButton}
+      <a href='/auth/auth/openid_connect' rel='nofollow' className='button button--block button-tertiary' data-method='post'><FormattedMessage id='sign_in_banner.sign_in' defaultMessage='Sign in' /></a>
     </div>
   );
 };
